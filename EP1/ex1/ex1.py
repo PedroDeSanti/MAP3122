@@ -1,3 +1,15 @@
+"""
+Exercicio 1 - EP1 - MAP3122
+
+File
+-------
+ex3.py
+
+Authors
+-------
+    Joao Victor Texeira Degelo      - 11803479
+    Pedro Henrique Martins de Santi - 11803483
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 

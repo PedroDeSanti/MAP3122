@@ -1,9 +1,9 @@
 """
-Exercicio 2 - EP1 - MAP3122
+Exercicio 4 - EP1 - MAP3122
 
 File
 -------
-ex2.py
+ex4.py
 
 Authors
 -------
@@ -14,52 +14,11 @@ Authors
 import numpy as np
 import matplotlib.pyplot as plt
 
-def gera_matriz(num_matriz, n):
-    """ 
-    Retorna as matrizes que serão utilizadas pelo algoritmo
-    
-    Parameters
-    -------------
-    num_matriz : int
-        Um inteiro (1 ou 2), que representa qual o formato da matriz que deve ser retornada
-    
-    n : int
-        Um inteiro que é a dimensão da matriz que deve ser retornada
-    
-    Returns
-    -------------
-    A : np.array
-        Caso num_matriz seja 1, retorna um np.array de dimensão nxn que 
-        representa a matriz que será utilizada na simulação,
-        caso num_matriz seja 2, retornará as duas matrizes de dimensões nxn
-        que serão utilizadas na simulação.
+class MetodoDasPotencias:
     """
-    
-    B0 = np.random.random_sample((n,n))
-    A = np.zeros((n, n))
-    I = np.identity(n)
-    if num_matriz == 1:
-        A = B0+B0.T+n*I
-        return A
-        
-    else:
-        p=3*n
-        B = B0+p*I 
-        autovalores_1 = [10.71, 12.64, 14.86,  8.07, 11.29,  4.05, 10.12, 3.51,  6.35, 13.02] #autovalores próximos
-        autovalores_2 = [ 3.53,  9.26, 18.75, 13.88,  6.41, 10.77, 12.31, 9.78, 11.35, 10.92] # autovalores distantes
-        D_1 = np.diag(np.array(autovalores_1)[:n])
-        D_2 = np.diag(np.array(autovalores_2)[:n])
-        B_inv = np.linalg.inv(B)
-        A_1 = B @ D_1 @ B_inv
-        A_2 = B @ D_2 @ B_inv
-        return A_1, A_2
-    
-    
-class MetodoDasPotenciasInverso:
-    """
-    Uma classe usada para representar o método das potências inverso,
+    Uma classe usada para representar o método das potências,
     que é utilizado para calcular o maior autovetor e autovalor
-    da matriz inversa de A  
+    da matriz A  
     
     ...
     Attributes
@@ -74,7 +33,7 @@ class MetodoDasPotenciasInverso:
         
     A : np.array
         a matriz sobre a qual sera aplicada o método
-        das potências inverso
+        das potências
     
     n : int
         um inteiro que representa a dimensão da matriz 
@@ -109,20 +68,14 @@ class MetodoDasPotenciasInverso:
     Methods
     -----------
     _calcula_mi()
-        Calcula o mi de acordo com o método das potências inverso
+        Calcula o mi de acordo com o método das potências
         
     _calcula_x()
-        Calcula o x de acordo com o método das potências inverso
+        Calcula o x de acordo com o método das potências
         
     _calcula_erros()
         Calcula os erros do autovetor e do autovalor
         utilizando os valores calculados
-        
-    _criterio_das_linhas()
-        Verifica se a matriz A satisfaz o critério das linhas
-    
-    _sor()
-        Executa o método SOR para a determinação das soluções do sistema linear
         
     calcula_aproximacao()
         Executa as iterações até chegar em uma solução 
@@ -134,24 +87,16 @@ class MetodoDasPotenciasInverso:
         convergência.
         
     """
-    def __init__(self, A, omega, it_max, eps):
-        self.x_nao_normalizado = []
+    def __init__(self, A, it_max, eps):
         self.x = []
         self.mi = []
         self.n = A.shape[0]
         self.A = A
-        self.omega = omega
         self.it_max = it_max
         self.eps = eps
         
-        # verifica se a matriz A satisfaz o criterio das linhas, 
-        #mas mesmo que nao satisfaça, tenta executar o método SOR,
-        #pois ele ainda pode convergir 
-        self.satisfaz = self._criterio_das_linhas()
-        
-        
-        #obtem os autovalores e autovetores de A inversa
-        autovalores, autovetores = np.linalg.eig(np.linalg.inv(A))
+        #obtem os autovalores e autovetores de A
+        autovalores, autovetores = np.linalg.eig(A)
         
         #salva os indices dos dois maiores autovalores
         A_argsort = np.argsort(np.abs(autovalores), axis=0)
@@ -169,7 +114,6 @@ class MetodoDasPotenciasInverso:
         if x_estrela[0]<0:
             x_estrela = -x_estrela
         
-        
         self.lambda_1 = lambda_1
         self.lambda_2 = lambda_2
         self.eta = abs(lambda_2/lambda_1)
@@ -181,64 +125,21 @@ class MetodoDasPotenciasInverso:
     
     def _calcula_mi(self):
         """
-        Calcula o mi de acordo com o método das potências inverso
+        Calcula o mi de acordo com o método das potências
         """
         x_k = self.x[-1]
-        x_k_nao_normalizado = self.x_nao_normalizado[-1]
-        mi_k = (x_k.T @ x_k_nao_normalizado)/(x_k.T @ x_k)
+        mi_k = (x_k.T @ (self.A @ x_k))/(x_k.T @ x_k)
         self.mi.append(mi_k)
         return
     
     def _calcula_x(self):
         """
-        Calcula o x de acordo com o método das potências inverso
+        Calcula o x de acordo com o método das potências
         """
         x_k = self.x[-1]
-        x_k_nn_prox = self._sor()
-        self.x_nao_normalizado.append(x_k_nn_prox)
-        x_k_prox = x_k_nn_prox/(np.linalg.norm(x_k_nn_prox))
+        x_k_prox = (self.A @ x_k)/(np.linalg.norm(self.A @ x_k)) 
         self.x.append(x_k_prox)
         return
-    
-    def _criterio_das_linhas(self):
-        """
-        Verifica se a matriz A satisfaz o critério das linhas
-        """
-        for i in range(self.n):
-            if self.A[i].sum()-self.A[i][i]>self.A[i][i]:
-                return False
-            
-        return True
-    
-    def _sor(self):
-        """
-        Executa o método SOR para a determinação das soluções do sistema linear
-        """
-        satisfaz = self._criterio_das_linhas()
-        
-        A=self.A
-        b=self.x[-1]
-        valores_x = []
-        x0 = np.random.rand(self.n)
-        valores_x.append(x0)
-
-        for k in range(self.it_max):
-            x_ant = valores_x[-1]
-            x_at = np.zeros(self.n)
-            for i in range(self.n):
-                xi = b[i]
-                for j in range(i):
-                    xi=xi-A[i][j]*x_at[j]
-
-
-                for j in range(i+1, self.n):
-                    xi=xi-A[i][j]*x_ant[j]
-
-                xi=xi/A[i][i]
-                x_at[i] = (1-self.omega)*x_ant[i] + self.omega*xi
-            valores_x.append(x_at)    
-        return valores_x[-1]
-        
     
     def _calcula_erros(self):
         """
@@ -261,7 +162,6 @@ class MetodoDasPotenciasInverso:
         """
         x0 = np.random.rand(self.n)
         self.x.append(x0)
-        self.x_nao_normalizado.append(x0)
         self._calcula_mi()
         self._calcula_erros()
 
@@ -270,11 +170,9 @@ class MetodoDasPotenciasInverso:
             self._calcula_x()
             if self.x[-1][0]<0:
                 self.x[-1] = -self.x[-1]
-                self.x_nao_normalizado[-1] = -self.x_nao_normalizado[-1]
             self._calcula_mi()
             self._calcula_erros()
             i=i+1
-
     
     def gera_grafico_comparativo(self, titulo, use_tex = False, savefig=False, filename=""):
         """
@@ -335,18 +233,103 @@ class MetodoDasPotenciasInverso:
         plt.show()
         return
     
+class Grafo:
+    def __init__(self, matriz_de_arestas, n):
+        self.n = n
+        self.matriz_adj = np.zeros((self.n, self.n))
+        for i, j in matriz_de_arestas:
+            self.matriz_adj[i][j] = 1
+            self.matriz_adj[j][i] = 1
+            
+        return 
     
-A1 = gera_matriz (1, 10)
-A21, A22 = gera_matriz(2, 10)
+    def acha_indice(self):
+        """
+        Método da classe que utiliza o método das potências
+        para determinar o índice do grafo, isto é o autovetor de 
+        maior módulo da matriz de adjacência do grafo
+        
+        
+        Returns
+        ------------------------
+        (autovalor, autovetor) : (np.float, np.array)
+            Retorna uma tupla com o autovalor e o autovetor associado a ele
+        """
+        
+        M = MetodoDasPotencias(self.matriz_adj, 70, 1e-15)
+        M.calcula_aproximacao()
+        autovetor = M.x[-1]  # ultimo x  calculado
+        autovalor = M.mi[-1] # ultimo mi calculado
+        return autovalor, autovetor
+    
+    
+    def calcula_grau_medio_e_maximo(self):
+        """
+        Método da classe que calcula o grau médio e o grau máximo
+        do grafo
 
-M1 = MetodoDasPotenciasInverso(A1, 1.1, 70, 1e-15)
-M1.calcula_aproximacao()
-M1.gera_grafico_comparativo("Método das potências inverso para matriz simétrica")
 
-M21 = MetodoDasPotenciasInverso(A21, 1.1, 70, 1e-15)
-M21.calcula_aproximacao()
-M21.gera_grafico_comparativo("Método das potências inverso para a matriz com os dois menores autovalores próximos")
+        Returns
+        --------------
+        (grau_med, grau_max) : (np.float, np.float)
+            Retorna uma tupla contendo o grau médio e o grau máximo
+        """    
+        grau_med = self.matriz_adj.sum(axis=0).sum()/self.n
+        grau_max = self.matriz_adj.sum(axis=0).max()
+        
+        return grau_med, grau_max
+    
+MA1 = [(0 ,  1),
+       (1 ,  2),
+       (2 ,  3),
+       (3 ,  4),
+       (0 ,  5),
+       (5 ,  8),
+       (8 , 11),
+       (11, 14),
+       (1 ,  6),
+       (6 ,  9),
+       (9 , 12),
+       (12, 15),
+       (7 , 10),
+       (10, 13),
+       (13, 15),
+       (15, 16)]
 
-M22 = MetodoDasPotenciasInverso(A22, 1.1, 70, 1e-15)
-M22.calcula_aproximacao()
-M22.gera_grafico_comparativo("Método das potências inverso a matriz com os dois menores autovalores distantes")
+MA2 = [(0 ,  1),
+       (1 ,  5),
+       (5 , 10),
+       (10, 13),
+       (2 ,  5),
+       (5 ,  9),
+       (9 , 12),
+       (12, 15),
+       (4 ,  5),
+       (5 ,  6),
+       (6 ,  7),
+       (7 ,  8),
+       (3 ,  8),
+       (8 , 11),
+       (11, 14),
+       (14, 16)]
+
+G1 = Grafo(MA1, 17)
+G2 = Grafo(MA2, 17)
+
+g_med, g_max =G1.calcula_grau_medio_e_maximo()
+autova, autove = G1.acha_indice()
+
+print("Para o grafo G1, obtemos que:")
+print("grau_médio: "+str(g_med))
+print("grau_máximo: "+str(g_max))
+print("maior autovalor: " +str(autova))
+print("autovetor associado: ", autove)
+print("\n--------------------------------\n")
+g_med, g_max = G2.calcula_grau_medio_e_maximo()
+autova, autove = G2.acha_indice()
+
+print("Para o grafo G1, obtemos que:")
+print("grau_médio: "+str(g_med))
+print("grau_máximo: "+str(g_max))
+print("maior autovalor: " +str(autova))
+print("autovetor associado: ", autove)
