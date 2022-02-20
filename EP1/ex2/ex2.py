@@ -152,6 +152,11 @@ class MetodoDasPotenciasInverso:
         #pega o autovetor correspondente ao maior autovalor
         x_estrela = autovetores.T[id_max_1]
         
+        #garante que a primeira coordenada é sempre maior que 0
+        if x_estrela[0]<0:
+            x_estrela = -x_estrela
+        
+        
         self.lambda_1 = lambda_1
         self.lambda_2 = lambda_2
         self.eta = abs(lambda_2/lambda_1)
@@ -241,34 +246,21 @@ class MetodoDasPotenciasInverso:
         tabelada
 
         """
-        while True:
-#             Nem sempre o erro do autovetor converge, isso depende 
-#             do vetor inicial escolhido, no nosso caso o vetor e escolhido
-#             aleatoriamente, entao, enquanto nao convergir, repetimos o 
-#             processo para outro vetor inicial
-            
-            x0 = np.random.rand(self.n)-0.5
-            self.x.append(x0)
-            self.x_nao_normalizado.append(x0)
+        x0 = np.random.rand(self.n)
+        self.x.append(x0)
+        self.x_nao_normalizado.append(x0)
+        self._calcula_mi()
+        self._calcula_erros()
+
+        i=1
+        while i<self.it_max and self.erro_autovetor[-1]>self.eps:
+            self._calcula_x()
+            if self.x[-1][0]<0:
+                self.x[-1] = -self.x[-1]
+                self.x_nao_normalizado[-1] = -self.x_nao_normalizado[-1]
             self._calcula_mi()
             self._calcula_erros()
-
-            i=1
-            while i<self.it_max and self.erro_autovetor[-1]>self.eps:
-                self._calcula_x()
-                self._calcula_mi()
-                self._calcula_erros()
-                i=i+1
-            
-            if(self.erro_autovetor[-1] < 0.5e-0):
-                return
-            
-            else:
-                # resetamos os valores para a nova simulacao
-                self.x = []
-                self.mi = []
-                self.erro_autovetor = []
-                self.erro_autovalor = []
+            i=i+1
 
     
     def gera_grafico_comparativo(self, titulo, use_tex = False, savefig=False, filename=""):
