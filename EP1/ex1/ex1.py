@@ -3,7 +3,7 @@ Exercicio 1 - EP1 - MAP3122
 
 File
 -------
-ex3.py
+ex1.py
 
 Authors
 -------
