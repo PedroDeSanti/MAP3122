@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 
 def autovalor_certo(A):
     autovalores_certo, autovetores_certo = np.linalg.eig(A)
-    print("autovalores corretos = \n", autovalores_certo, "\n")
-    print("autovetores corretos = \n", autovetores_certo, "\n")
+    print("autovalores corretos: \n", autovalores_certo, "\n")
+    print("autovetores corretos: \n", autovetores_certo, "\n")
 
 def autovalor(A, k):
     """
