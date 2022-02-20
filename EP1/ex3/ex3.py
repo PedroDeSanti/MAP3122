@@ -19,6 +19,26 @@ def autovalor_certo(A):
     print("autovalores corretos: \n", autovalores_certo, "\n")
     print("autovetores corretos: \n", autovetores_certo, "\n")
 
+def normaliza_autovetor(V):
+    """
+    Funcao que normaliza os autovetores dada uma matriz na
+    qual suas colunas sao formadas por autovetores
+
+    Parameters
+    -------------
+    V : np.array
+        Matriz com os autovetores a serem normalizados
+
+    Returns
+    -------------
+    V : np.array
+        Matriz com os autovetores normalizados
+    """
+    n = V.shape[0] # dimensao da matrix nxn
+    for i in range(1, n + 1):
+        V[:, i - 1] = V[:, i - 1]/np.linalg.norm(V[:, i - 1])
+    return V
+
 def autovalor(A, k):
     """
     Funcao que calcula os autovalores e autovetores de uma matriz usando a fatoracao QR
@@ -50,6 +70,7 @@ def autovalor(A, k):
 
         i = i + 1
     print("Matriz apos", k, "fatoracoes:\n", A, "\n")
+    V = normaliza_autovetor(V)
     return np.diag(A), V
 
 def fatoracao_QR(A):
@@ -94,15 +115,7 @@ def fatoracao_QR(A):
     return Q, Ri
 
 def main():
-    # valor exato autovalores de A pelo polinomio caracteristico
-
-    # valor exato dos autovetores de A resolvendo sitemas lineares (A - lambda_k*I)x = 0, k = 1, 2, 3
-    # det (A - lambda_k*I) = 0, x!=0, duas equacoes indep. inifinitas solucoes para x
-    # Solucao unica: normalizacao e sinal positivo para a primeira entrada do autovetor
-    # autovetores v_k devem ser normalizados: ||v_k|| = 1
-
-    # verificar convergencia
-
+    print("\n-----------------------------------------------------\n")
     # Aprox numerica dos autovalores e autovetores de A por QR
 
     A1 = np.array([[6, -2, -1], [-2, 6,-1], [-1, -1, 5]])
@@ -113,8 +126,8 @@ def main():
     print("autovetores encontrados: \n", V1, "\n")
     autovalor_certo(A1)
 
+
     print("\n-----------------------------------------------------\n")
-    # valor autovalores de A pelo polinomio caracteristico
     # valor autovalores de A por QR
 
     A2 = np.array([[1, 1], [-3, 1]])
@@ -125,8 +138,8 @@ def main():
     print("autovetores encontrados: \n", V2, "\n")
     autovalor_certo(A2)
 
+
     print("\n-----------------------------------------------------\n")
-    # valor autovalores de A pelo polinomio caracteristico
     # valor autovalores de A por QR
 
     A3 = np.array([[3, -3], [0.33333, 5]])
@@ -137,7 +150,7 @@ def main():
     print("autovetores encontrados: \n", V3, "\n")
     autovalor_certo(A3)
 
-
+    print("\n-----------------------------------------------------\n")
     # Aplicar metodo QR as duas matrizes B do exercicio 1
 
 
