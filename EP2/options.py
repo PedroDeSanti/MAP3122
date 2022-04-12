@@ -211,13 +211,13 @@ def cenario_1(show_graph=True):
     
     gera_cenarios_lucro(V, 0.5, N, M, L, sigma, K, T, r, 1000, opcao_compra_1000, show_graph, "Cenários de lucro e prejuízo para diversos preços do ativo em t=0.5 com sigma = 0.1 e r = 0.1", "grafico_9_cenario_1.png")
     # Valor da opcao em funcao do preco do ativo em t=0
-    gera_cenarios_preco_do_ativo(V, 0., N, M, L, sigma, K, T, r,show_graph, "Valor da opção para diversos preços do ativo em t=0 com sigma = 0.1 e r = 0.1", "grafico_10_cenario_1.png")
+    #gera_cenarios_preco_do_ativo(V, 0., N, M, L, sigma, K, T, r,show_graph, "Valor da opção para diversos preços do ativo em t=0 com sigma = 0.1 e r = 0.1", "grafico_10_cenario_1.png")
 
     # Valor da opcao em funcao do preco do ativo em t=0.5
-    gera_cenarios_preco_do_ativo(V, 0.5, N, M, L, sigma, K, T, r,show_graph, "Valor da opção para diversos preços do ativo em t=0.5 com sigma = 0.1 e r = 0.1", "grafico_11_cenario_1.png")
+    #gera_cenarios_preco_do_ativo(V, 0.5, N, M, L, sigma, K, T, r,show_graph, "Valor da opção para diversos preços do ativo em t=0.5 com sigma = 0.1 e r = 0.1", "grafico_11_cenario_1.png")
 
     # Valor da opcao em funcao do preco do ativo em t=1.0
-    gera_cenarios_preco_do_ativo(V, 1., N, M, L, sigma, K, T, r,show_graph, "Valor da opção para diversos preços do ativo em t=1.0 com sigma = 0.1 e r = 0.1", "grafico_12_cenario_1.png")
+    #gera_cenarios_preco_do_ativo(V, 1., N, M, L, sigma, K, T, r,show_graph, "Valor da opção para diversos preços do ativo em t=1.0 com sigma = 0.1 e r = 0.1", "grafico_12_cenario_1.png")
 
 
     arquivo.close()
@@ -340,7 +340,7 @@ def interface():
     print("c2 - Rodar o cenário 2")
     print("c3 - Rodar o cenário 3")
     print("ti - Comparar o tempo de execução do método vetorizado com o sem")
-    print("an - Comparar o resultado obtido pelo método numérico com o analítico")
+    #print("an - Comparar o resultado obtido pelo método numérico com o analítico")
     print("ex - Finalizar o programa")
     res = input("Operação escolhida: ")
     if res == "c1":
@@ -354,17 +354,12 @@ def interface():
         interface()
 
     elif res == "c3":
-        print("c3")
+        print("não implementado ainda =(")
         print()
         interface()
 
     elif res == "ti":
         compara_tempo_execucao()
-        print()
-        interface()
-
-    elif res == "an":
-        print("an")
         print()
         interface()
 
